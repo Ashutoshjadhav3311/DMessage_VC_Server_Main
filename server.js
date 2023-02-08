@@ -4,30 +4,46 @@ const app = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://dmessagevc.onrender.com",//for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
+    origin: "  https://dmessagevc.onrender.com", //for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
     methods: ["GET", "POST"],
   },
 });
-
-//let connectedUsers = {};
-
+var usernames = {};
+let connectedUsers = {};
+const users = [];
+const nameId = [];
 io.on("connection", socket => {
-  //let userName = socket.handshake.query.name; // Get the user's name from the client
-  // Add the user to the connected users object
-  // connectedUsers[socket.id] = userName;
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      userID: id,
+      username: socket.username,
+    });
+  }
+  socket.emit("users", users);
+  //runs whenever any client connects
+  socket.on("adduser", data => {
+    // we store the username in the socket session for this client
+    socket.username = data;
 
-  //socket.emit("connectedUsers", connectedUsers);
-  // Send the connected users list to the client
-  //socket.on("disconnect", () => {
-  //  socket.broadcast.emit("callEnded");
-  //  delete connectedUsers[socket.id]; // Remove the user from the connected users object
-  // });
+    connectedUsers.username = data;
+    console.log(socket.username);
+    // console.log(users);
+  });
+  socket.on("username_userId", function (data) {
+    nameId.push({
+      userID: data.id,
+      username: data.username,
+    });
+    console.log(nameId);
+    io.emit("userlist", nameId);
+    // io.emit("userlist", { nameId });
+  });
+
+  // io.emit("userlist", { nameId });
 
   socket.on("me", () => {
     socket.emit("me", socket.id);
   });
-  //socket.on("");
-  //socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded");
@@ -45,4 +61,5 @@ io.on("connection", socket => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
 });
+
 server.listen(5000, () => console.log("server is running on port 5000"));
