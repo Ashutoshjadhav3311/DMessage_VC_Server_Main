@@ -4,7 +4,7 @@ const app = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://localhost:3000", //for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
+    origin: "https://link-fallback-vc-version.onrender.com/", //for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
     methods: ["GET", "POST"],
   },
 });
