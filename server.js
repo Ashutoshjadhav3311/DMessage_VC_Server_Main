@@ -2,12 +2,8 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const server = http.createServer(app);
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*", //for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
-    methods: ["GET", "POST"],
-  },
-});
+const io = require('socket.io')(server, { origins: '*:*'});
+
 var usernames = {};
 let connectedUsers = {};
 const users = [];
@@ -63,3 +59,9 @@ io.on("connection", socket => {
 });
 
 server.listen(5000, () => console.log("server is running on port 5000"));
+/*const io = require("socket.io")(server, {
+  cors: {
+    origin: "*", //for cloud https://dmessagevc.onrender.com/ for local http://localhost:3000
+    methods: ["GET", "POST"],
+  },
+});*/
