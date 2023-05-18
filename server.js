@@ -21,6 +21,9 @@ io.on("connection", socket => {
       username: socket.username,
     });
   }
+  socket.on("ping", (callback) => {
+    callback();                                   //socket.io latency
+  });
   socket.emit("users", users);
   //runs whenever any client connects
   socket.on("adduser", data => {
